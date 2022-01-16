@@ -16,7 +16,6 @@ import { ArrowWrapper, BottomGrouping, SwapCallbackError, Wrapper } from 'compon
 import TradePrice from 'components/swap/TradePrice'
 import TokenWarningModal from 'components/TokenWarningModal'
 import SyrupWarningModal from 'components/SyrupWarningModal'
-import SafeMoonWarningModal from 'components/SafeMoonWarningModal'
 import ProgressSteps from 'components/ProgressSteps'
 
 import { INITIAL_ALLOWED_SLIPPAGE } from 'constants/index'
@@ -47,13 +46,8 @@ const Swap = () => {
     useCurrency(loadedUrlParams?.outputCurrencyId),
   ]
   const [dismissTokenWarning, setDismissTokenWarning] = useState<boolean>(false)
-  const [transactionWarning, setTransactionWarning] = useState<{
-    selectedToken: string | null
-    purchaseType: string | null
-  }>({
-    selectedToken: null,
-    purchaseType: null,
-  })
+  const [isSyrup, setIsSyrup] = useState<boolean>(false)
+  const [syrupTransactionType, setSyrupTransactionType] = useState<string>('')
   const urlLoadedTokens: Token[] = useMemo(
     () => [loadedInputCurrency, loadedOutputCurrency]?.filter((c): c is Token => c instanceof Token) ?? [],
     [loadedInputCurrency, loadedOutputCurrency]
@@ -62,12 +56,10 @@ const Swap = () => {
     setDismissTokenWarning(true)
   }, [])
 
-  const handleConfirmWarning = () => {
-    setTransactionWarning({
-      selectedToken: null,
-      purchaseType: null,
-    })
-  }
+  const handleConfirmSyrupWarning = useCallback(() => {
+    setIsSyrup(false)
+    setSyrupTransactionType('')
+  }, [])
 
   const { account } = useActiveWeb3React()
   const theme = useContext(ThemeContext)
@@ -225,32 +217,27 @@ const Swap = () => {
     setSwapState((prevState) => ({ ...prevState, tradeToConfirm: trade }))
   }, [trade])
 
-  // This will check to see if the user has selected Syrup or SafeMoon to either buy or sell.
+  // This will check to see if the user has selected Syrup to either buy or sell.
   // If so, they will be alerted with a warning message.
-  const checkForWarning = useCallback(
+  const checkForSyrup = useCallback(
     (selected: string, purchaseType: string) => {
-      if (['SYRUP', 'SAFEMOON'].includes(selected)) {
-        setTransactionWarning({
-          selectedToken: selected,
-          purchaseType,
-        })
+      if (selected === 'syrup') {
+        setIsSyrup(true)
+        setSyrupTransactionType(purchaseType)
       }
     },
-    [setTransactionWarning]
+    [setIsSyrup, setSyrupTransactionType]
   )
 
   const handleInputSelect = useCallback(
     (inputCurrency) => {
       setApprovalSubmitted(false) // reset 2 step UI for approvals
       onCurrencySelection(Field.INPUT, inputCurrency)
-      if (inputCurrency.symbol === 'SYRUP') {
-        checkForWarning(inputCurrency.symbol, 'Selling')
-      }
-      if (inputCurrency.symbol === 'SAFEMOON') {
-        checkForWarning(inputCurrency.symbol, 'Selling')
+      if (inputCurrency.symbol.toLowerCase() === 'syrup') {
+        checkForSyrup(inputCurrency.symbol.toLowerCase(), 'Selling')
       }
     },
-    [onCurrencySelection, setApprovalSubmitted, checkForWarning]
+    [onCurrencySelection, setApprovalSubmitted, checkForSyrup]
   )
 
   const handleMaxInput = useCallback(() => {
@@ -262,14 +249,11 @@ const Swap = () => {
   const handleOutputSelect = useCallback(
     (outputCurrency) => {
       onCurrencySelection(Field.OUTPUT, outputCurrency)
-      if (outputCurrency.symbol === 'SYRUP') {
-        checkForWarning(outputCurrency.symbol, 'Buying')
-      }
-      if (outputCurrency.symbol === 'SAFEMOON') {
-        checkForWarning(outputCurrency.symbol, 'Buying')
+      if (outputCurrency.symbol.toLowerCase() === 'syrup') {
+        checkForSyrup(outputCurrency.symbol.toLowerCase(), 'Buying')
       }
     },
-    [onCurrencySelection, checkForWarning]
+    [onCurrencySelection, checkForSyrup]
   )
 
   return (
@@ -280,11 +264,10 @@ const Swap = () => {
         onConfirm={handleConfirmTokenWarning}
       />
       <SyrupWarningModal
-        isOpen={transactionWarning.selectedToken === 'SYRUP'}
-        transactionType={transactionWarning.purchaseType}
-        onConfirm={handleConfirmWarning}
+        isOpen={isSyrup}
+        transactionType={syrupTransactionType}
+        onConfirm={handleConfirmSyrupWarning}
       />
-      <SafeMoonWarningModal isOpen={transactionWarning.selectedToken === 'SAFEMOON'} onConfirm={handleConfirmWarning} />
       <CardNav />
       <AppBody>
         <Wrapper id="swap-page">

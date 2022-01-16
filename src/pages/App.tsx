@@ -18,7 +18,6 @@ import { LanguageContext } from '../hooks/LanguageContext'
 import { TranslationsContext } from '../hooks/TranslationsContext'
 
 import Menu from '../components/Menu'
-import useGetDocumentTitlePrice from '../hooks/useGetDocumentTitlePrice'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -122,14 +121,19 @@ export default function App() {
     localStorage.setItem(CACHE_KEY, langObject.code)
   }
 
-  useGetDocumentTitlePrice()
+  // useGetDocumentTitlePrice()
 
   return (
     <Suspense fallback={null}>
       <HashRouter>
         <AppWrapper>
           <LanguageContext.Provider
-            value={{ selectedLanguage, setSelectedLanguage: handleLanguageSelect, translatedLanguage, setTranslatedLanguage }}
+            value={{
+              selectedLanguage,
+              setSelectedLanguage: handleLanguageSelect,
+              translatedLanguage,
+              setTranslatedLanguage,
+            }}
           >
             <TranslationsContext.Provider value={{ translations, setTranslations }}>
               <Menu>

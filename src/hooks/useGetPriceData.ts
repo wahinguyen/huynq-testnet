@@ -1,18 +1,12 @@
 import { useEffect, useState } from 'react'
 
 type ApiResponse = {
-  updated_at: string
-  data: {
-    [key: string]: {
-      name: string
-      symbol: string
-      price: string
-      price_BNB: string
-    }
+  prices: {
+    [key: string]: string
   }
+  update_at: string
 }
-
-const api = 'https://api.pancakeswap.info/api/tokens'
+const api = 'https://api.pancakeswap.com/api/v1/price'
 
 const useGetPriceData = () => {
   const [data, setData] = useState<ApiResponse | null>(null)
