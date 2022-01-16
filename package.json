@@ -1,7 +1,7 @@
 {
   "name": "@pancakeswap/interface",
   "description": "Pancakeswap Interface",
-  "homepage": "https://huynq-testnet.github.io/#/swap",
+  "homepage": "https://wahinguyen.github.io",
   "private": true,
   "dependencies": {
     "@binance-chain/bsc-connector": "^1.0.0",
