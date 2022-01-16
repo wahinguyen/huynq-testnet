@@ -28,13 +28,13 @@ export const DAI = new Token(
   'DAI',
   'Dai Stablecoin'
 )
-export const BUSD = new Token(
-  ChainId.BSCTESTNET,
-  '0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7',
-  18,
-  'BUSD',
-  'Binance USD'
-)
+// export const BUSD = new Token(
+//   ChainId.BSCTESTNET,
+//   '0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7',
+//   18,
+//   'BUSD',
+//   'Binance USD'
+// )
 export const USDT = new Token(
   ChainId.BSCTESTNET,
   '0x7ef95a0fee0dd31b22626fa2e10ee6a223f8a684',
@@ -109,7 +109,7 @@ const WETH_ONLY: ChainTokenList = {
 // used to construct intermediary pairs for trading
 export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
   ...WETH_ONLY,
-  [ChainId.BSCTESTNET]: [...WETH_ONLY[ChainId.BSCTESTNET], DAI, BUSD, USDT, ETH],
+  [ChainId.BSCTESTNET]: [...WETH_ONLY[ChainId.BSCTESTNET], DAI, WAHI, USDT, ETH, WBNB],
 }
 
 /**
@@ -123,20 +123,20 @@ export const CUSTOM_BASES: { [chainId in ChainId]?: { [tokenAddress: string]: To
 // used for display in the default list when adding liquidity
 export const SUGGESTED_BASES: ChainTokenList = {
   ...WETH_ONLY,
-  [ChainId.BSCTESTNET]: [...WETH_ONLY[ChainId.BSCTESTNET], DAI, BUSD, USDT],
+  [ChainId.BSCTESTNET]: [...WETH_ONLY[ChainId.BSCTESTNET], DAI, WAHI, USDT, WBNB],
 }
 
 // used to construct the list of all pairs we consider by default in the frontend
 export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
   ...WETH_ONLY,
-  [ChainId.BSCTESTNET]: [...WETH_ONLY[ChainId.BSCTESTNET], DAI, BUSD, USDT],
+  [ChainId.BSCTESTNET]: [...WETH_ONLY[ChainId.BSCTESTNET], DAI, WAHI, USDT, WBNB],
 }
 
 export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } = {
   [ChainId.BSCTESTNET]: [
+    [WAHI, WBNB],
     [CAKE, WBNB],
     [WBNB, CAKE],
-    [BUSD, USDT],
     [DAI, USDT],
   ],
 }
